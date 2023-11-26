@@ -1,0 +1,72 @@
+Library: org.openxtalk.widget.onscreenkeyboard
+
+Type: widget
+
+Summary:
+Copyright (C) 2023 Paul McClernan
+This widget displays an on-screen keyboard.
+
+author: Paul McClernan
+
+version: 1.0.0
+
+
+Name: opaque
+
+Type: property
+
+Syntax: set the opaque of <widget> to <pColor>
+get the opaque of <widget>
+
+Summary: Determines the widget's bottom layer of the keyboard is filled with a background color.
+
+Description: Use the <opaque> property to set the bottom layer of the keyboard to be filled with a background color.
+
+
+
+
+Name: keyboardScale
+
+Type: property
+
+Syntax: set the keyboardScale of <widget> to <pColor>
+get the keyboardScale of <widget>
+
+Summary: Determines the color of key label fills.
+
+Description:
+Use the <labelColor> property to set the color of keys label, when the key
+isn't highlighted.
+
+
+
+Name: strokeWidth
+
+Type: property
+
+Syntax: set the strokeWidth of <widget> to <pStrokeSize>
+get the stroke of <widget>
+
+Summary: Determines the thickness of keyboard shapes outlines.
+
+Description: Use the <strokeWidth> property to the thickness of keyboard shapes outlines.
+
+
+
+
+Name: vKeysDown
+
+Type: property
+
+Syntax: set the vKeysDown of <widget> to <pKeyCodesList>
+get the vKeysDown of <widget>
+
+Summary: a comma seperated list of character key codes of the highlighted keys of the virtual keyboard
+
+Description:
+Use the <keysDown> property to get or set the highlighted keys of the virtual keyboard by
+passing a comma delimited list of keyCodes, the same way returned from the engines keysDown()
+function and as passed by rawKeyDown and rawKeyUp event messages.
+
+
+
