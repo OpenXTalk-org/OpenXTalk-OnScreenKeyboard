@@ -2,7 +2,61 @@
 
 on keyDown pKey
    do keyDown && pKey in me
+   switch pKey
+      case " "
+      case "z"
+      case "x"
+      case "c"
+      case "v"
+      case "b"
+      case "n"
+      case "m"
+      case ","
+      case "."
+      case "/"
+      case "a"
+      case "s"
+      case "d"
+      case "f"
+      case "g"
+      case "h"
+      case "j"
+      case "k"
+      case "l"
+      case ";"
+      case "'"
+      case "q"
+      case "w"
+      case "e"
+      case "r"
+      case "g"
+      case "t"
+      case "y"
+      case "u"
+      case "i"
+      case "o"
+      case "p"
+      case "["
+      case "]"
+      case "\"
+      case "`"
+      case "1"
+      case "2"
+      case "3"
+      case "4"
+      case "5"
+      case "6"
+      case "7"
+      case "8"
+      case "9"
+      case "0"
+      case "-"
+      case "="
+      default
+         break
+   end switch
 end keyDown
+
 
 on keyUp pKey
    do keyUp && pKey in me
@@ -42,7 +96,7 @@ on virtualKeyDown pKey
          repeat for each item tModifier in lModifiersDown
             do keyUp && tModifier in me
          end repeat
-         
+
          replace "-AltLeft" with "" in lModifiersDown
          replace "-AltRight" with "" in lModifiersDown
          replace "-Left" with "" in lModifiersDown
