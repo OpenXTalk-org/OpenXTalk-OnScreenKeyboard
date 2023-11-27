@@ -625,7 +625,7 @@ public handler setKeysDown(in pKeysDown as String) returns nothing
     variable tArray as Array
 
    clearAllHighlights() -- always clear all highlights first rather than adding highlighted keys
-    if pKeysDown is "" then
+    if pKeysDown is "" or pKeysDown is "empty" then
       -- clearAllHighlights()
       return
     else
@@ -634,7 +634,7 @@ public handler setKeysDown(in pKeysDown as String) returns nothing
     repeat for each element tKeyCode in tList
         repeat with tCounter from 1 up to (the number of elements in mKeyboardBtns )
           put element tCounter of mKeyboardBtns into tArray
-          if tArray["charcode"] is tKeyCode or tArray["shiftcharcode"] is tKeyCode then
+          if tArray["charcode"] is tKeyCode or tArray["shiftcharcode"] or tArray["optcharcode"] is tKeyCode then
              put true into tArray["highlighted"]
              put tArray into mKeyboardBtns[tCounter]
           end if
@@ -863,9 +863,9 @@ private handler clearAllHighlights()
               put tArray into mMediaKeys[tCounter]
            end repeat
        end if
-
    end if
    put "" into mVKeysDown
+   redraw all
 end handler
 
 -------------------------------------------------------- this handler is called when the widget is saved
@@ -1478,6 +1478,13 @@ public handler OnDo(in pThingToDo as String)
    put element 1 of tList && element 2 of tList into mPreviousCommand
    -- log mPreviousCommand
    if element 1 of tList is "rawKeyDown" then
+      repeat with tCounter from 1 up to (the number of elements in mModifierBtns )
+        put element tCounter of mModifierBtns into tArray
+        if tArray["charcode"] is element 2 of tList then
+           put true into tArray["highlighted"]
+           put tArray into mModifierBtns[tCounter]
+        end if
+     end repeat
      repeat with tCounter from 1 up to (the number of elements in mKeyboardBtns )
          put element tCounter of mKeyboardBtns into tArray
          if tArray["charcode"] is element 2 of tList or tArray["shiftcharcode"] is element 2 of tList  then
@@ -1516,9 +1523,16 @@ public handler OnDo(in pThingToDo as String)
    end if
 
    if element 1 of tList is "rawKeyUp" then
+      repeat with tCounter from 1 up to (the number of elements in mModifierBtns )
+        put element tCounter of mModifierBtns into tArray
+        if tArray["charcode"] is element 2 of tList then
+           put false into tArray["highlighted"]
+           put tArray into mModifierBtns[tCounter]
+        end if
+     end repeat
        repeat with tCounter from 1 up to (the number of elements in mKeyboardBtns )
          put element tCounter of mKeyboardBtns into tArray
-         if tArray["charcode"] is element 2 of tList or tArray["shiftcharcode"] is element 2 of tList then
+         if tArray["name"] is element 2 of tList or tArray["shiftname"] is element 2 of tList or tArray["optname"] is element 2 of tList then
             put false into tArray["highlighted"]
             put tArray into mKeyboardBtns[tCounter]
          end if
@@ -1633,13 +1647,13 @@ public handler OnDo(in pThingToDo as String)
       -- log tCharCode
       repeat with tCounter from 1 up to (the number of elements in mKeyboardBtns )
          put element tCounter of mKeyboardBtns into tArray
-         if tArray["name"] is element 2 of tList then
+         if tArray["name"] is element 2 of tList or tArray["shiftname"] is element 2 of tList or tArray["optname"] is element 2 of tList then
             put true into tArray["highlighted"]
             put tArray into mKeyboardBtns[tCounter]
             --- schedule timer -- do a 'commandKeyDown' here in some milliseconds
-            schedule timer in 0.1 seconds
-            schedule timer in 0.2 seconds
-            schedule timer in 0.3 seconds
+            schedule timer in 0.12 seconds
+            schedule timer in 0.25 seconds
+            schedule timer in 0.50 seconds
             exit repeat
          end if
       end repeat
@@ -2096,7 +2110,7 @@ public handler buildKeyboard() returns optional any
     ----- Control-Left, Control-Right, Command-AltLeft, Command-AltRight, Shift-Left, Shift-Right, Win-Option, FunctionKey, MenuKey, CapsLock
     put the empty array into tArray
     put "Control-Left" into tArray["name"]
-    put "17" into tArray["charcode"]
+    put "65507" into tArray["charcode"] -- "17"
     put "M42.14 425.66h88.49v71.21H42.14Z" into tArray["btnpath"]
     put "M73.06,467.53a7.4,7.4,0,0,1-5.18,1.85,7.79,7.79,0,0,1-6.13-2.5A10,10,0,0,1,59.52,460q0-4.74,2.53-7.3a7.58,7.58,0,0,1,5.62-2.23c3,0,5.27,1,6.67,3a6.48,6.48,0,0,1,1.26,3.37H71.82a5,5,0,0,0-.95-2,4.24,4.24,0,0,0-6.3.48,8,8,0,0,0-1.19,4.71,7,7,0,0,0,1.26,4.55,4,4,0,0,0,3.19,1.52,3.63,3.63,0,0,0,3-1.3,5.89,5.89,0,0,0,1-2.1h3.74A8.17,8.17,0,0,1,73.06,467.53Zm11.22-1.14V469l-1.66.06c-1.65.06-2.78-.23-3.38-.86a2.55,2.55,0,0,1-.59-1.85v-8.23H76.79v-2.49h1.86V451.9h3.46v3.73h2.17v2.49H82.11v7.07q0,.82.21,1c.14.14.56.2,1.27.2h.34Zm9-7.65a2.89,2.89,0,0,0-2.83,1.37,5.34,5.34,0,0,0-.4,2.38v6.39H86.49V455.51h3.33v2.33A7.52,7.52,0,0,1,91.23,456a3.85,3.85,0,0,1,2.55-.82h.47v3.59c-.22,0-.42,0-.59-.05Zm3.13-7.94h3.5v18.08h-3.5Z" into tArray["btnlabel"]
    put false into tArray["highlighted"]
@@ -2104,7 +2118,7 @@ public handler buildKeyboard() returns optional any
 
    put the empty array into tArray
    put "Control-Right" into tArray["name"]
-   put "17" into tArray["charcode"]
+   put "65507" into tArray["charcode"] -- 17?
    put "M1015.27 425.66h84.17v71.21H1015.27Z" into tArray["btnpath"]
    put "M1052.54,467.53a7.4,7.4,0,0,1-5.18,1.85,7.79,7.79,0,0,1-6.13-2.5A10,10,0,0,1,1039,460c0-3.16.84-5.59,2.54-7.3a7.55,7.55,0,0,1,5.62-2.23c3,0,5.26,1,6.67,3a6.55,6.55,0,0,1,1.25,3.37h-3.78a5,5,0,0,0-.94-2,3.84,3.84,0,0,0-3.06-1.18,3.8,3.8,0,0,0-3.25,1.66,8,8,0,0,0-1.19,4.71,7,7,0,0,0,1.26,4.55,4,4,0,0,0,3.19,1.52,3.63,3.63,0,0,0,3-1.3,5.56,5.56,0,0,0,1-2.1H1055A8.17,8.17,0,0,1,1052.54,467.53Zm11.22-1.14V469l-1.65.06c-1.65.06-2.78-.23-3.39-.86a2.55,2.55,0,0,1-.59-1.85v-8.23h-1.86v-2.49h1.86V451.9h3.46v3.73h2.17v2.49h-2.17v7.07q0,.82.21,1c.14.14.56.2,1.28.2h.33Zm9-7.65a2.88,2.88,0,0,0-2.83,1.37,5.32,5.32,0,0,0-.41,2.38v6.39H1066V455.51h3.34v2.33a7.52,7.52,0,0,1,1.41-1.83,3.81,3.81,0,0,1,2.55-.82h.46v3.59c-.22,0-.41,0-.58-.05Zm3.13-7.94h3.49v18.08h-3.49Z" \
    into tArray["btnlabel"]
@@ -2113,7 +2127,7 @@ public handler buildKeyboard() returns optional any
 
    put the empty array into tArray
    put "Command-AltLeft" into tArray["name"]
-   put "91" into tArray["charcode"]
+   put "65511" into tArray["charcode"] -- 91?
    put "M220.16 425.66h100.69v71.21H220.16Z" into tArray["btnpath"]
    put "M260.64,478.82l-.12-.36a6.1,6.1,0,0,0-.35-.85,4.76,4.76,0,0,0-4.23-2.62c-.55,0-1.11,0-1.6,0H254v-5.52c2.42.17,5.61-.13,6.64-3.93v-1.41l0-.13c-.09-.19-.17-.38-.26-.59a7.06,7.06,0,0,0-.71-1.36,4.88,4.88,0,0,0-5.38-1.62,4.67,4.67,0,0,0-3.38,4.22c0,.5,0,1,0,1.54v.32h-5.84v-.29c0-.51,0-1,0-1.53a4.71,4.71,0,0,0-4.21-4.45,4.92,4.92,0,0,0-5.31,3.14,4.38,4.38,0,0,0,.64,4.1,4.92,4.92,0,0,0,3.84,2h1.92V475h-1.59a4.81,4.81,0,0,0-5,4c-.35,2.34,1.21,4.44,3.79,5.1l.1,0,.08,0,1.62,0,.11,0,.36-.12.1,0a6.83,6.83,0,0,0,1.07-.43,4.41,4.41,0,0,0,2.49-3.88c0-.5,0-1,0-1.52V478h5.84v1.44c0,2.78.78,3.87,3.48,4.83l2.13,0h.08a5.11,5.11,0,0,0,3.56-2.57,7.53,7.53,0,0,0,.36-.89l.13-.36,0-1.5Zm-5.85,2.42h0a1,1,0,0,1-.8-1c0-.61,0-1.22,0-1.87v-.47h.4c.55,0,1.07,0,1.58,0a1.69,1.69,0,0,1,0,3.37A3.66,3.66,0,0,1,254.79,481.24ZM254,464.7a1.76,1.76,0,0,1,1.81-1.58h0a1.75,1.75,0,0,1,1.75,1.62,1.71,1.71,0,0,1-1.62,1.77c-.51,0-1,0-1.6,0H254v-.34C254,465.66,254,465.18,254,464.7Zm-3.14,4.81V475H245.1v-5.44ZM242,466.17c0,.11,0,.24,0,.36h-.41c-.53,0-1,0-1.51,0a1.73,1.73,0,0,1-1.67-1.74,1.75,1.75,0,0,1,1.71-1.66h.08a1.74,1.74,0,0,1,1.79,1.54C242,465.15,242,465.64,242,466.17Zm0,13.61a1.8,1.8,0,0,1-3.58-.12,1.73,1.73,0,0,1,1.67-1.74l.85,0H242v.36A15.09,15.09,0,0,1,242,479.78Zm42.79-24.66h-7.1l-1.33,4.11h-4.21l6.88-20h4.55l6.82,20H286Zm-1.12-3.44-2.41-7.85-2.48,7.85Zm8.95-12.42h3.73v20h-3.73Zm13.89,17.22v2.89l-1.77.06c-1.76.07-3-.25-3.61-.95a2.86,2.86,0,0,1-.62-2v-9.09h-2V444.6h2v-4.12h3.68v4.12h2.32v2.75h-2.32v7.8a1.86,1.86,0,0,0,.22,1.13,2.37,2.37,0,0,0,1.36.23h.36Z" \
    into tArray["btnlabel"]
@@ -2147,7 +2161,7 @@ public handler buildKeyboard() returns optional any
    ---------------------------------------------
    put the empty array into tArray
     put "Win-Option" into tArray["name"]
-    put "18" into tArray["charcode"]
+    put "65513" into tArray["charcode"]
     put "M130.63 425.66h89.53v71.21H130.63Z" into tArray["btnpath"]
     put "M203.05,471h-7.74a2,2,0,0,1,0-4h7.74a2,2,0,0,1,0,4Zm1.93,8.78a2,2,0,0,0-1.93-2h-11.6l-3.8-9.56a2,2,0,0,0-1.79-1.25h-8.59a2,2,0,0,0,0,4h7.31l3.8,9.56a1.94,1.94,0,0,0,1.78,1.25h12.89A2,2,0,0,0,205,479.81Zm-48.91-40.3v10h12.64V437.39Zm-11.17,10h8.77V439.7c-3.28.53-5.63,1-8.77,1.52Zm0,10.73c3.17.49,5.55,1,8.76,1.47v-9.79H144.9Zm23.68-8.32H156v10l12.54,1.9Z" into tArray["btnlabel"]
    put false into tArray["highlighted"]
@@ -2155,6 +2169,7 @@ public handler buildKeyboard() returns optional any
 
    put the empty array into tArray
     put "FunctionKey" into tArray["name"]
+    put "" into tArray["charcode"] -- ???
     put "M855.25 425.66h83.7v71.21H855.25Z" into tArray["btnpath"]
     put "M882,453.06h12.19v3h-8.51v5.2h7.86v3h-7.86v8.43H882ZM904.08,458a6.4,6.4,0,0,0-4.58,1.76l-.1-1.45H896l0,.54c.09,1,.12,2.08.12,3.58V472.7h3.71v-8.55a2.81,2.81,0,0,1,.16-1,3.34,3.34,0,0,1,3.17-2.15c2,0,2.95,1.16,2.95,3.45v8.22h3.71v-8.49C909.85,459.63,906.74,458,904.08,458Z" into tArray["btnlabel"]
    put false into tArray["highlighted"]
@@ -2162,6 +2177,7 @@ public handler buildKeyboard() returns optional any
 
    put the empty array into tArray
     put "MenuKey" into tArray["name"]
+    put "" into tArray["charcode"] -- ???
     put "M938.95 425.66h76.32v71.21H938.95Z" into tArray["btnpath"]
     put "M990.53,468l-2.35,3.08c-1.23-4.05-2.39-7.91-3.73-12.34L995,462.34l-2.55,2.78,5.68,6.67-1.87,2.1Zm-4,4.59c.47.85.93,1.71,1.39,2.57a18.64,18.64,0,0,1-2.92.52c-6.77.14-13.54.23-20.63.34-.1-9.94-.19-19.69-.29-29.68h23.2c.1,3.61.2,7.17.31,10.92-5.23-.34-5.23-.34-5,3.85l-15.77.08c-.52,1.87.05,2.35,1.5,2.32,4.44-.11,8.89,0,13.33-.14,1.62,0,2.42.59,2.51,2.57l-17.32.1c-.49,1.8-.08,2.5,1.64,2.45,5-.15,9.93-.13,14.89-.23,1.45,0,2.46.29,1.9,2.57L967,471c-.42,1.6-.33,2.48,1.45,2.43,5.62-.14,11.23-.13,17-.19,0-.61.11-1.15.19-2.08C986.1,471.87,986.35,472.24,986.56,472.63Zm-18.76-18c5.3.06,10.61,0,15.92-.06a2,2,0,0,0,1.41-1.25,23.78,23.78,0,0,0-.24-3.87H966.62a32.09,32.09,0,0,0,0,4.05A1.59,1.59,0,0,0,967.8,454.6Z" into tArray["btnlabel"]
    put false into tArray["highlighted"]
@@ -2169,6 +2185,7 @@ public handler buildKeyboard() returns optional any
 
    put the empty array into tArray
     put "Capslock" into tArray["name"]
+    put "65509" into tArray["charcode"]
     put "M42.14 283.25h142.45v71.21H42.14Z" into tArray["btnpath"]
     put "M76,325.12A7.4,7.4,0,0,1,70.84,327a7.77,7.77,0,0,1-6.13-2.5,10,10,0,0,1-2.24-6.89q0-4.74,2.54-7.3a7.56,7.56,0,0,1,5.62-2.23c3,0,5.27,1,6.67,3a6.37,6.37,0,0,1,1.25,3.37H74.78a5.11,5.11,0,0,0-1-2,4.24,4.24,0,0,0-6.3.48,8,8,0,0,0-1.19,4.71,7.06,7.06,0,0,0,1.25,4.55,4,4,0,0,0,3.2,1.52,3.66,3.66,0,0,0,3-1.3,5.89,5.89,0,0,0,1-2.1h3.74A8.17,8.17,0,0,1,76,325.12Zm5.6-10.57q1.38-1.77,4.76-1.77a8.48,8.48,0,0,1,3.9.87,3.34,3.34,0,0,1,1.7,3.29v6.13c0,.43,0,.94,0,1.55a1.83,1.83,0,0,0,.21.93,1.17,1.17,0,0,0,.51.4v.52h-3.8a3.55,3.55,0,0,1-.22-.76c0-.24-.07-.51-.1-.81a7.29,7.29,0,0,1-1.67,1.34,5,5,0,0,1-2.55.65,4.4,4.4,0,0,1-3-1,3.69,3.69,0,0,1-1.18-2.94,3.82,3.82,0,0,1,1.9-3.57,8.67,8.67,0,0,1,3.07-.86l1.19-.14a5.85,5.85,0,0,0,1.38-.31,1,1,0,0,0,.75-1,1.19,1.19,0,0,0-.57-1.14,3.54,3.54,0,0,0-1.67-.31,2.19,2.19,0,0,0-1.76.61,2.57,2.57,0,0,0-.49,1.23H80.64A5.09,5.09,0,0,1,81.62,314.55Zm2.6,9.39a1.84,1.84,0,0,0,1.2.41,3.51,3.51,0,0,0,2.08-.67,2.81,2.81,0,0,0,1-2.41V320a3.84,3.84,0,0,1-.67.34,5.69,5.69,0,0,1-.93.23l-.78.15a5,5,0,0,0-1.58.48,1.6,1.6,0,0,0-.81,1.48A1.55,1.55,0,0,0,84.22,323.94Zm22.07-9.41a7.19,7.19,0,0,1,1.62,5.08,8.06,8.06,0,0,1-1.59,5.39,5.17,5.17,0,0,1-4.09,1.85,4.26,4.26,0,0,1-2.65-.8,4.91,4.91,0,0,1-1.13-1.29v7H95V313.1h3.35v2a5.46,5.46,0,0,1,1.2-1.37,4.4,4.4,0,0,1,2.77-.89A5.28,5.28,0,0,1,106.29,314.53Zm-2,5.25a5.24,5.24,0,0,0-.71-2.73,2.45,2.45,0,0,0-2.28-1.19,2.61,2.61,0,0,0-2.62,1.8,7,7,0,0,0-.36,2.43,3.9,3.9,0,0,0,1.23,3.28,2.92,2.92,0,0,0,1.75.55,2.52,2.52,0,0,0,2.22-1.13A5.29,5.29,0,0,0,104.3,319.78Zm15.34-6.07a4.33,4.33,0,0,1,1.81,3.46H118a2.16,2.16,0,0,0-.38-1.07,2.4,2.4,0,0,0-2-.71,2.83,2.83,0,0,0-1.63.36,1,1,0,0,0-.48.83.91.91,0,0,0,.51.87,22.52,22.52,0,0,0,3.65,1,6.59,6.59,0,0,1,3.12,1.49,3.34,3.34,0,0,1,1,2.51,4.06,4.06,0,0,1-1.47,3.24,8.87,8.87,0,0,1-9.23-.07,4.34,4.34,0,0,1-1.5-3.39h3.54a2.4,2.4,0,0,0,.48,1.32,3.24,3.24,0,0,0,2.41.7,3.71,3.71,0,0,0,1.63-.3,1,1,0,0,0,.12-1.82,20.74,20.74,0,0,0-3.64-1.05,7.69,7.69,0,0,1-3.2-1.41,3.08,3.08,0,0,1-.94-2.41,4.18,4.18,0,0,1,1.46-3.18,5.82,5.82,0,0,1,4.09-1.33A7.56,7.56,0,0,1,119.64,313.71Z" into tArray["btnlabel"]
    put false into tArray["highlighted"]
