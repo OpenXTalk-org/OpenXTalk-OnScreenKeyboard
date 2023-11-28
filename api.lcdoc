@@ -3,7 +3,7 @@ Library: org.openxtalk.widget.onscreenkeyboard
 Type: widget
 
 Summary:
-Copyright (C) 2023 Paul McClernan
+Copyright (C) 2023 Paul McClernan for OpenXTalk
 This widget displays an on-screen keyboard.
 
 author: Paul McClernan
