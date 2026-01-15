@@ -1,6 +1,7 @@
 
 ._api.lcdoc
-._example
+._*
+*._*
 ._LICENSE
 ._OnScreenKeyboard.lcb
 ._OnScreenKeyboardDarkMode.jpg
@@ -17,3 +18,4 @@ samples/._demo.oxtstack
 samples/.DS_Store
 support/._defaultscript.livecodescript
 samples/._KeyComboDialogDemo.oxtstack
+.DS_Store
